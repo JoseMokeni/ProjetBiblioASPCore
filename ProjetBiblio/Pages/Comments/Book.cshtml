@@ -1,0 +1,48 @@
+﻿@page
+@model ProjetBiblio.Pages.Comments.BookModel
+@{
+    ViewData["title"] = "Comments - " + Model.book.Title;
+}
+
+<section>
+    <h2>@Model.book.Title by @Model.book.Author - Comments</h2>
+  <div class="container my-5 py-5 text-dark">
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-11 col-lg-9 col-xl-7">
+        
+        @foreach(var comment in Model.comments){
+                    <div class="card w-100">
+                        <div class="card-body p-4">
+                            <div class="">
+                                <h5>Anonymous</h5>
+                                <p class="small">@comment.CommentDate.ToShortDateString()</p>
+                                <p>
+                                    @comment.CommentText
+                                </p>
+                                <div class="d-flex align-items-center mt-3">
+                                    <p class="me-2">Rate:</p>
+                                    <div class="stars">
+                                        @for(var i = 0; i < comment.Rate; i++)
+                                        {
+                                            <span>
+                                                <i class="fas fa-star star-active text-warning"></i>
+                                            </span>
+                                            
+                                        }
+
+                                        @for (var i = 0; i < 5 - comment.Rate; i++)
+                                        {
+                                            <i class="fas fa-star star-inactive"></i>
+
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+      </div>
+    </div>
+  </div>
+</section>

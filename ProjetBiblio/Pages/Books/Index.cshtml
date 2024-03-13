@@ -1,0 +1,139 @@
+﻿@page
+@model ProjetBiblio.Pages.Books.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+    var bookCount = Model.books.Count();
+    var data = Model.books;
+}
+
+<h1>Books</h1>
+
+<form action="" method="get">
+    <div class="input-group">
+        <div class="form-outline" data-mdb-input-init>
+            <input type="text" id="keyword" name="keyword" class="form-control" placeholder="Search" value="@Model.searchVal" />
+
+        </div>
+        <button type="submit" class="btn btn-secondary" id="submit-btn" data-mdb-ripple-init>
+            <span>OK</span>
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+</form>
+
+<br/>
+
+
+@if (bookCount == 0)
+{
+    <div class="alert alert-danger" role="alert">
+        No employees found.
+    </div>
+}
+else
+{
+    <h4>Books count : @bookCount</h4>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+
+                <th scope="col" rowspan=2>#</th>
+                <th scope="col" rowspan=2>Title</th>
+                <th scope="col" rowspan=2>Author</th>
+                <th scope="col" rowspan=2>Description</th>
+                <th scope="col" rowspan=1 colspan="3" class="text-center">Quantity</th>
+                <th scope="col" rowspan=2>Available</th>
+                <th scope="col" rowspan=2>Genre</th>
+                <th scope="col" rowspan=2> Actions</th>
+            </tr>
+            <tr>
+                <th scope="col" rowspan=1>In stock</th>
+                <th scope="col" rowspan=1>Non-returned</th>
+                <th scope="col" rowspan=1>Returned</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+
+            @for (var i = 0; i < bookCount; i++)
+            {
+                <tr id="@("tr" + i)">
+                    <th scope="row">@(i + 1)</th>
+                    <td>@data[i].Title</td>
+                    <td>@data[i].Author</td>
+                    <td>@data[i].Description</td>
+
+                    @if (@data[i].Quantity > 0)
+                    {
+                        <td>@data[i].Quantity</td>
+
+                    }
+                    else
+                    {
+                        <td>-</td>
+
+                    }
+
+                    @{int borrowingCount = 0; int borrowedCount = 0;}
+
+                    @foreach(var borrowing in Model.borrowings)
+                    {
+                        if (borrowing.BookId.Equals(data[i].BookId) && borrowing.IsReturned.Equals(false))
+                        {
+                            borrowingCount++;
+                        }
+                        else if (borrowing.BookId.Equals(data[i].BookId) && borrowing.IsReturned.Equals(true))
+                        {
+                            borrowedCount++;
+                        }
+                    }
+
+                    @if(borrowingCount == 0)
+                    {
+                        <td>-</td>
+                    }
+                    else
+                    {
+                        <td>@borrowingCount</td>
+                    }
+
+                    @if (borrowedCount == 0)
+                    {
+                        <td>-</td>
+                    }
+                    else
+                    {
+                        <td>@borrowedCount</td>
+                    }
+
+                    <td>
+
+                        @if (data[i].Quantity > 0)
+                        {
+                            <input type="checkbox" disabled checked />
+                        }
+                        else
+                        {
+                            <input type="checkbox" disabled />
+                        }
+
+                    </td>
+
+                    <td>
+                        @data[i].Genre.Name
+                    </td>
+
+                    <td>
+                        <a asp-page="../Borrowings/Book" asp-route-id="@data[i].BookId" class="btn btn-outline-info">Show borrowings</a>
+                        <a asp-page="../Comments/Book" asp-route-id="@data[i].BookId" class="btn btn-outline-info">Show comments</a>
+                    </td>
+
+
+                </tr>
+
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,112 @@
+﻿@page
+@model ProjetBiblio.Pages.Borrowings.IndexModel
+@{
+    ViewData["Title"] = "Borrowings";
+    var borrowingCount = Model.borrowings.Count();
+    var data = Model.borrowings;
+    DateTime sysdate = DateTime.Now;
+}
+
+<h1>Borrowings</h1>
+
+
+@if (borrowingCount == 0)
+{
+    <div class="alert alert-danger" role="alert">
+        No borrowings found in the database.
+    </div>
+}
+else
+{
+    <h4>Borrowings count : @borrowingCount</h4>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+
+                <th scope="col" rowspan=2>#</th>
+                <th scope="col" rowspan=2>Book</th>
+                <th scope="col" rowspan=2>Customer</th>
+                <th scope="col" rowspan=2>Returned ?</th>
+                <th scope="col" rowspan=2>Status</th>
+                <th scope="col" rowspan=1 colspan="3" class="text-center">Dates</th>
+            </tr>
+            <tr>
+                <th scope="col" rowspan=1>Borrow Date</th>
+                <th scope="col" rowspan=1>Due Date</th>
+                <th scope="col" rowspan=1>Return Date</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @for (var i = 0; i < borrowingCount; i++)
+            {
+              
+                string className = "";
+                
+                @if (data[i].ReturnDate != null)
+                {
+                    className = "bg-success p-2 text-dark bg-opacity-25";
+
+                } 
+                else if (data[i].DueDate < sysdate)
+                {
+                    className = "bg-danger p-2 text-dark bg-opacity-25";
+
+                }
+                else
+                {
+                    className = "bg-info p-2 text-dark bg-opacity-25";
+
+                }
+
+                <tr id="@("tr" + i)" class="@className">
+                
+
+                    <th scope="row">@(i + 1)</th>
+                    <td>@data[i].Book.Title</td>
+                    <td>@data[i].User.Name</td>
+                    <td>
+                        @if (data[i].IsReturned)
+                        {
+                            <input type="checkbox" disabled checked />
+
+                        } 
+                        else
+                        {
+                            <input type="checkbox" disabled />
+
+                        }
+
+                    </td>
+
+                    <td>@data[i].Status</td>
+
+                    <td>
+                        @data[i].BorrowDate.ToShortDateString()
+                    </td>
+
+                    <td>
+                        @data[i].DueDate.ToShortDateString()
+                    </td>
+                    @if (@data[i].ReturnDate != null)
+                    {
+                        <td>
+                            @DateTime.Parse(@data[i].ReturnDate.ToString()).ToShortDateString()
+                        </td>
+
+                    }
+                    else
+                    {
+                        <td>
+                            -
+                        </td>
+                    }
+
+
+                </tr>
+
+            }
+        </tbody>
+    </table>
+}
